@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,23 +9,19 @@ namespace LogicGame
 
 public class GridMaker : MonoBehaviour
 {
-    int rows, cols;
     public GameObject cellHolder;
-    public List<LevelCreator> levelHolder = new List<LevelCreator>();
-    public List<GameObject> cells = new List<GameObject>();
-    public List<SpriteLibrary> spriteLibrary = new List<SpriteLibrary>();
+    public List<LevelCreator> levelHolder = new();
+    public List<GameObject> cells = new();
+    public List<SpriteLibrary> spriteLibrary = new();
     public static GridMaker instance=null;
     public GameObject boundary;
     int currentLevel = 0;
-    public int Rows
-    {
-        get { return rows; }
-    }
+    
+    
+    
+    public int Rows { get; private set; }
+    public int Cols { get; private set; }
 
-    public int Cols
-    {
-        get { return cols; }
-    }
     private void Awake()
     {
         if (instance == null)
@@ -45,8 +39,8 @@ public class GridMaker : MonoBehaviour
         currentLevel = PlayerPrefs.GetInt("Level");
 
         float count = levelHolder[currentLevel].level.Count;
-        rows = (int)Mathf.Sqrt(count);
-        cols = rows;
+        Rows = (int)Mathf.Sqrt(count);
+        Cols = Rows;
 
         CreateGrid();
         CompileRules();
@@ -62,11 +56,11 @@ public class GridMaker : MonoBehaviour
 
     public void CreateGrid()
     {
-        for(int gI = -1; gI <= rows; gI += 1)
+        for(int gI = -1; gI <= Rows; gI += 1)
         {
-            for(int gJ = -1; gJ <= rows; gJ += 1)
+            for(int gJ = -1; gJ <= Rows; gJ += 1)
             {
-                if(gI == -1 || gJ==-1|| gI==rows||gJ==rows )
+                if(gI == -1 || gJ==-1|| gI==Rows||gJ==Rows )
                     Instantiate(boundary, new Vector3(gI, gJ, 0), Quaternion.identity);
             }
         }
@@ -77,11 +71,11 @@ public class GridMaker : MonoBehaviour
         {
             if (levelHolder[currentLevel].level[i] != ElementTypes.Empty)
             {
-                GameObject g = Instantiate(cellHolder, new Vector3(counter % cols, counter / rows, 0), Quaternion.identity);
+                GameObject g = Instantiate(cellHolder, new Vector3(counter % Cols, counter / Rows, 0), Quaternion.identity);
                 cells.Add(g);
                 ElementTypes currentElement = levelHolder[currentLevel].level[i];
 
-                g.GetComponent<CellProperty>().AssignInfo(counter / rows, counter % cols, currentElement);
+                g.GetComponent<CellProperty>().AssignInfo(counter / Rows, counter % Cols, currentElement);
                 //Debug.Log( currentElement.ToString() + "R : " + i / rows + " C : " + i % cols);
 
 
@@ -98,7 +92,7 @@ public class GridMaker : MonoBehaviour
 
     public Vector2 Return2D(int i)
     {
-        return new Vector2(i % cols, i / rows);
+        return new Vector2(i % Cols, i / Rows);
     }
 
 
@@ -107,7 +101,7 @@ public class GridMaker : MonoBehaviour
         bool isPush = false;
         int curRow = r, curCol = c;
         List<GameObject> atRC = FindObjectsAt(curRow, curCol);
-        if (r >= rows || c >= cols || r < 0 || c < 0)
+        if (r >= Rows || c >= Cols || r < 0 || c < 0)
             return true;
         foreach(GameObject g in atRC)
         {
@@ -148,74 +142,56 @@ public class GridMaker : MonoBehaviour
     public void CompileRules()
     {
         ResetData();
-        for(int i = 0; i < cells.Count; i++)
+        foreach (var t in cells)
         {
-            if (cells[i] != null)
+            if (t != null)
             {
-                CellProperty currentcell = cells[i].GetComponent<CellProperty>();
+                CellProperty currentcell = t.GetComponent<CellProperty>();
 
-                if (IsElementStartingWord(currentcell.Element))
-                {
-
-                    /*if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow + 1, currentcell.CurrentCol), ElementTypes.IsWord))
+                if (!IsElementStartingWord(currentcell.Element)) continue;
+                /*if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow + 1, currentcell.CurrentCol), ElementTypes.IsWord))
                     {
                         if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow +2, currentcell.CurrentCol)))
                         {
                             Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow + 2, currentcell.CurrentCol));
                         }
                     }*/
-                    if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow - 1, currentcell.CurrentCol), ElementTypes.IsWord))
+                if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow - 1, currentcell.CurrentCol), ElementTypes.IsWord))
+                {
+                    if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow - 2, currentcell.CurrentCol)))
                     {
-                        if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow - 2, currentcell.CurrentCol)))
-                        {
-                            Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow - 2, currentcell.CurrentCol));
-                        }
+                        Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow - 2, currentcell.CurrentCol));
                     }
-                    if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol + 1), ElementTypes.IsWord))
+                }
+                if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol + 1), ElementTypes.IsWord))
+                {
+                    if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol + 2)))
                     {
-                        if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol + 2)))
-                        {
-                            Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow, currentcell.CurrentCol + 2));
-                        }
+                        Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow, currentcell.CurrentCol + 2));
                     }
+                }
 
-                    /*if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol -1), ElementTypes.IsWord))
+                /*if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol -1), ElementTypes.IsWord))
                     {
                         if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol - 2)))
                         {
                             Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow, currentcell.CurrentCol - 2));
                         }
                     }*/
-                }
             }
-
         }
     }
 
 
     public ElementTypes GetActualObjectFromWord(ElementTypes e) {
-        if (e == ElementTypes.PlayerWord)
+        return e switch
         {
-            return ElementTypes.Player;
-        }
-        else if (e == ElementTypes.FlagWord)
-        {
-            return ElementTypes.Flag;
-        }
-        else if (e == ElementTypes.RockWord)
-        {
-            return ElementTypes.Rock;
-        }
-        else if (e == ElementTypes.WallWord)
-        {
-            return ElementTypes.Wall;
-        }
-        else if(e== ElementTypes.HazardWord)
-        {
-            return ElementTypes.Hazard;
-        }
-        return ElementTypes.Empty;
-
+            ElementTypes.PlayerWord => ElementTypes.Player,
+            ElementTypes.FlagWord => ElementTypes.Flag,
+            ElementTypes.RockWord => ElementTypes.Rock,
+            ElementTypes.WallWord => ElementTypes.Wall,
+            _ => e == ElementTypes.HazardWord ? ElementTypes.Hazard : ElementTypes.Empty
+        };
     }
 
 
@@ -342,7 +318,7 @@ public class GridMaker : MonoBehaviour
         return null;
     }
 
-    public bool IsElementStartingWord(ElementTypes e)
+    private bool IsElementStartingWord(ElementTypes e)
     {
         if((int)e>=100 && (int)e < 150)
         {
@@ -356,7 +332,7 @@ public class GridMaker : MonoBehaviour
         return cells.FindAll(x =>x!=null && x.GetComponent<CellProperty>().CurrentRow == r && x.GetComponent<CellProperty>().CurrentCol == c);
     }
 
-    public ElementTypes ReturnWordAt(int r,int c)
+    private ElementTypes ReturnWordAt(int r,int c)
     {
         List<GameObject> l = FindObjectsAt(r, c);
         
@@ -384,7 +360,7 @@ public class GridMaker : MonoBehaviour
         return false;
     }
 
-    public bool DoesListContainWord(List<GameObject> l)
+    private bool DoesListContainWord(List<GameObject> l)
     {
         foreach (GameObject g in l)
         {

@@ -241,7 +241,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialRow: 0
   initialCol: 0
-  target: {fileID: 0}
   rb: {fileID: 0}
 --- !u!212 &2017301210
 SpriteRenderer:

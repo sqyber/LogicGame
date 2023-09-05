@@ -32,11 +32,6 @@ namespace LogicGame
     {
     
         [SerializeField]
-        public List<ElementTypes> level = new List<ElementTypes>();
-
-        public LevelCreator()
-        {
-            level = new List<ElementTypes>();
-        }
+        public List<ElementTypes> level = new();
     }
 }
