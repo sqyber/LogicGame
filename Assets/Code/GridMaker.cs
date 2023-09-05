@@ -3,14 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 namespace LogicGame
 {
-   using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GridMaker : MonoBehaviour
 {
@@ -70,7 +67,7 @@ public class GridMaker : MonoBehaviour
             for(int gJ = -1; gJ <= rows; gJ += 1)
             {
                 if(gI == -1 || gJ==-1|| gI==rows||gJ==rows )
-                Instantiate(boundary, new Vector3(gI, gJ, 0), Quaternion.identity);
+                    Instantiate(boundary, new Vector3(gI, gJ, 0), Quaternion.identity);
             }
         }
 
@@ -213,9 +210,9 @@ public class GridMaker : MonoBehaviour
         {
             return ElementTypes.Wall;
         }
-        else if(e== ElementTypes.GoopWord)
+        else if(e== ElementTypes.HazardWord)
         {
-            return ElementTypes.Goop;
+            return ElementTypes.Hazard;
         }
         return ElementTypes.Empty;
 

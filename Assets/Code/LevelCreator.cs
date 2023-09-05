@@ -10,16 +10,14 @@ namespace LogicGame
         Wall,
         Rock,
         Flag,
-        Goop,
+        Hazard,
 
         IsWord = 99,
         PlayerWord =100,
         WallWord,
         FlagWord,
         RockWord,
-        GoopWord,
-
-    
+        HazardWord,
 
         YouWord=200,
         PushWord,
