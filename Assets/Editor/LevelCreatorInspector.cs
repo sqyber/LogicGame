@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace LogicGame
 {
-    [CustomEditor(typeof(LevelCreator))] 
+    [CustomEditor(typeof(LevelCreator))]
     public class LevelCreatorInspector : Editor
     {
         Dictionary<ElementTypes, Texture> _textureHolder = new();
