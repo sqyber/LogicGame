@@ -1,110 +1,89 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace LogicGame
 {
-   using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-public class CellProperty : MonoBehaviour
+    using System.Collections.Generic;
+    using UnityEngine;
+
+    public class CellProperty : MonoBehaviour
 {
-    ElementTypes element;
-    bool isPushable;
     bool destroysObject;
     bool isWin;
     bool isPlayer;
-    bool isStop;
-    int currentRow, currentCol;
-    public ElementTypes Element
-    {
-        get { return element; }
-    }
-    public bool IsStop
-    {
-        get { return isStop; }
-    }
-    public bool IsPushable
-    {
-        get { return isPushable; }
-    }
-    public int CurrentRow
-    {
-        get { return currentRow; }
-    }
-    public int CurrentCol
-    {
-        get { return currentCol; }
-    }
+    public ElementTypes Element { get; private set; }
 
-    SpriteRenderer spriteRenderer;
+    public bool IsStop { get; private set; }
+
+    public bool IsPushable { get; private set; }
+
+    public int CurrentRow { get; private set; }
+
+    public int CurrentCol { get; private set; }
+
+    private SpriteRenderer _spriteRenderer;
 
 
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     public void AssignInfo(int r, int c, ElementTypes e)
     {
-        currentRow = r;
-        currentCol = c;
-        element = e;
+        CurrentRow = r;
+        CurrentCol = c;
+        Element = e;
         ChangeSprite();
-        if (e == ElementTypes.Wall)
+        switch (e)
         {
-            isStop = true;
-        }
-
-        if (e == ElementTypes.Player)
-        {
-            isPlayer = true;
-            spriteRenderer.sortingOrder = 100;
+            case ElementTypes.Wall:
+                IsStop = true;
+                break;
+            case ElementTypes.Player:
+                isPlayer = true;
+                _spriteRenderer.sortingOrder = 100;
+                break;
         }
     }
 
 
     public void Initialize()
     {
-        isPushable = false;
+        IsPushable = false;
         destroysObject = false;
         isWin = false;
         isPlayer = false;
-        isStop = false;
+        IsStop = false;
 
-        if ((int)element >= 99)
+        if ((int)Element >= 99)
         {
-            isPushable = true;
+            IsPushable = true;
         }
     }
 
-    public void ChangeSprite()
+    private void ChangeSprite()
     {
-        Sprite s = GridMaker.instance.spriteLibrary.Find(x => x.element == element).sprite;
+        Sprite s = GridMaker.instance.spriteLibrary.Find(x => x.element == Element).sprite;
 
-        spriteRenderer.sprite = s;
+        _spriteRenderer.sprite = s;
 
-        if (isPlayer || isPushable)
+        if (isPlayer || IsPushable)
         {
-            spriteRenderer.sortingOrder = 100;
+            _spriteRenderer.sortingOrder = 100;
         }
         else
         {
-            spriteRenderer.sortingOrder = 10;
+            _spriteRenderer.sortingOrder = 10;
         }
     }
 
 
     public void ChangeObject(CellProperty c)
     {
-        element = c.element;
-         isPushable = c.isPushable;
+        Element = c.Element;
+         IsPushable = c.IsPushable;
          destroysObject = c.destroysObject;
          isWin = c.isWin;
          isPlayer = c.isPlayer;
-         isStop = c.IsStop;
+         IsStop = c.IsStop;
         ChangeSprite();
     }
 
@@ -116,7 +95,7 @@ public class CellProperty : MonoBehaviour
 
     public void IsItStop(bool isS)
     {
-        isStop = isS;
+        IsStop = isS;
     }
 
     public void IsItWin(bool isW)
@@ -125,29 +104,29 @@ public class CellProperty : MonoBehaviour
     }
     public void IsItPushable(bool isPush)
     {
-        isPushable = isPush;
+        IsPushable = isPush;
     }
     public void IsItDestroy(bool isD)
     {
         destroysObject = isD;
     }
 
-    void Update()
+    private void Update()
     {
         CheckDestroy();
         if (isPlayer)
         {
             
-            if (Input.GetKeyDown(KeyCode.RightArrow) && currentCol + 1 < GridMaker.instance.Cols && !GridMaker.instance.IsStop(currentRow, currentCol + 1,Vector2.right))
+            if (Input.GetKeyDown(KeyCode.RightArrow) && CurrentCol + 1 < GridMaker.instance.Cols && !GridMaker.instance.IsStop(CurrentRow, CurrentCol + 1,Vector2.right))
             {
                 List<GameObject> movingObject = new List<GameObject>();
                 movingObject.Add(this.gameObject);
 
-                for (int c = currentCol + 1; c < GridMaker.instance.Cols-1; c++)
+                for (int c = CurrentCol + 1; c < GridMaker.instance.Cols-1; c++)
                 {
-                    if (GridMaker.instance.IsTherePushableObjectAt(currentRow, c))
+                    if (GridMaker.instance.IsTherePushableObjectAt(CurrentRow, c))
                     {
-                        movingObject.Add(GridMaker.instance.GetPushableObjectAt(currentRow, c));
+                        movingObject.Add(GridMaker.instance.GetPushableObjectAt(CurrentRow, c));
                     }
                     else
                     {
@@ -157,21 +136,21 @@ public class CellProperty : MonoBehaviour
                 foreach (GameObject g in movingObject)
                 {
                     g.transform.position = new Vector3(g.transform.position.x + 1, g.transform.position.y, g.transform.position.z);
-                    g.GetComponent < CellProperty>().currentCol++;
+                    g.GetComponent < CellProperty>().CurrentCol++;
                 }
                 GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) && currentCol - 1 >= 0 && !GridMaker.instance.IsStop(currentRow, currentCol - 1, Vector2.left))
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) && CurrentCol - 1 >= 0 && !GridMaker.instance.IsStop(CurrentRow, CurrentCol - 1, Vector2.left))
             {
                 List<GameObject> movingObject = new List<GameObject>();
                 movingObject.Add(this.gameObject);
 
-                    for (int c = currentCol - 1; c>0; c--)
+                    for (int c = CurrentCol - 1; c>0; c--)
                     {
-                        if (GridMaker.instance.IsTherePushableObjectAt(currentRow, c))
+                        if (GridMaker.instance.IsTherePushableObjectAt(CurrentRow, c))
                         {
-                            movingObject.Add(GridMaker.instance.GetPushableObjectAt(currentRow, c));
+                            movingObject.Add(GridMaker.instance.GetPushableObjectAt(CurrentRow, c));
                         }
                         else
                         {
@@ -181,21 +160,21 @@ public class CellProperty : MonoBehaviour
                 foreach (GameObject g in movingObject)
                 {
                     g.transform.position = new Vector3(g.transform.position.x - 1, g.transform.position.y, g.transform.position.z);
-                    g.GetComponent<CellProperty>().currentCol--;
+                    g.GetComponent<CellProperty>().CurrentCol--;
                 }
                     GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow) && currentRow + 1 < GridMaker.instance.Rows && !GridMaker.instance.IsStop(currentRow+1, currentCol, Vector2.up))
+            else if (Input.GetKeyDown(KeyCode.UpArrow) && CurrentRow + 1 < GridMaker.instance.Rows && !GridMaker.instance.IsStop(CurrentRow+1, CurrentCol, Vector2.up))
             {
                 List<GameObject> movingObject = new List<GameObject>();
                 movingObject.Add(this.gameObject);
 
-                for (int r = currentRow + 1; r<GridMaker.instance.Rows-1; r++)
+                for (int r = CurrentRow + 1; r<GridMaker.instance.Rows-1; r++)
                 {
-                    if (GridMaker.instance.IsTherePushableObjectAt(r, currentCol))
+                    if (GridMaker.instance.IsTherePushableObjectAt(r, CurrentCol))
                     {
-                        movingObject.Add(GridMaker.instance.GetPushableObjectAt(r, currentCol));
+                        movingObject.Add(GridMaker.instance.GetPushableObjectAt(r, CurrentCol));
                     }
                     else
                     {
@@ -205,21 +184,21 @@ public class CellProperty : MonoBehaviour
                 foreach (GameObject g in movingObject)
                 {
                     g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y + 1, g.transform.position.z);
-                    g.GetComponent<CellProperty>().currentRow++;
+                    g.GetComponent<CellProperty>().CurrentRow++;
                 }
                     GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) && currentRow - 1 >= 0 && !GridMaker.instance.IsStop(currentRow - 1, currentCol, Vector2.down))
+            else if (Input.GetKeyDown(KeyCode.DownArrow) && CurrentRow - 1 >= 0 && !GridMaker.instance.IsStop(CurrentRow - 1, CurrentCol, Vector2.down))
             {
                 List<GameObject> movingObject = new List<GameObject>();
                 movingObject.Add(this.gameObject);
 
-                for (int r = currentRow - 1; r >=0; r--)
+                for (int r = CurrentRow - 1; r >=0; r--)
                 {
-                    if (GridMaker.instance.IsTherePushableObjectAt(r, currentCol))
+                    if (GridMaker.instance.IsTherePushableObjectAt(r, CurrentCol))
                     {
-                        movingObject.Add(GridMaker.instance.GetPushableObjectAt(r, currentCol));
+                        movingObject.Add(GridMaker.instance.GetPushableObjectAt(r, CurrentCol));
                     }
                     else
                     {
@@ -229,7 +208,7 @@ public class CellProperty : MonoBehaviour
                 foreach (GameObject g in movingObject)
                 {
                     g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y - 1, g.transform.position.z);
-                    g.GetComponent<CellProperty>().currentRow--;
+                    g.GetComponent<CellProperty>().CurrentRow--;
                 }
                     GridMaker.instance.CompileRules();
                 CheckWin();
@@ -237,9 +216,9 @@ public class CellProperty : MonoBehaviour
         }
     }
 
-    public void CheckWin()
+    private void CheckWin()
     {
-        List<GameObject> objectsAtPlayerPosition = GridMaker.instance.FindObjectsAt(currentRow, currentCol);
+        List<GameObject> objectsAtPlayerPosition = GridMaker.instance.FindObjectsAt(CurrentRow, CurrentCol);
 
         foreach(GameObject g in objectsAtPlayerPosition)
         {
@@ -253,9 +232,9 @@ public class CellProperty : MonoBehaviour
     }
 
 
-    public void CheckDestroy()
+    private void CheckDestroy()
     {
-        List<GameObject> objectsAtPosition = GridMaker.instance.FindObjectsAt(currentRow, currentCol);
+        List<GameObject> objectsAtPosition = GridMaker.instance.FindObjectsAt(CurrentRow, CurrentCol);
         bool destroys = false;
         bool normalObject = false;
         foreach(GameObject g in objectsAtPosition)

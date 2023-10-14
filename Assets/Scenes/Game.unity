@@ -160,7 +160,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -223,7 +223,7 @@ MonoBehaviour:
   cellHolder: {fileID: 1824727024621867669, guid: d5f4ded1150bbf74c8975f9bcfccb01f, type: 3}
   levelHolder:
   - {fileID: 11400000, guid: e80a68c69e0ce604783d5e540113f5dc, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 82cb6f7704ec1d24da4e56702273c5d5, type: 2}
   cells: []
   spriteLibrary:
   - element: 0

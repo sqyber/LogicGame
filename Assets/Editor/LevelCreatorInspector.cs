@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.PlayerLoop;
 
 namespace LogicGame
 {
@@ -10,6 +12,7 @@ namespace LogicGame
         Dictionary<ElementTypes, Texture> _textureHolder = new();
         private void OnEnable()
         {
+            EditorApplication.update += Update;
             //for editor sprites when done
             //template: textureHolder.Add(ElementTypes.Empty, (Texture)EditorGUIUtility.Load("Assets/EditorDefaultResources/empty.png"));
             _textureHolder.Add(ElementTypes.Empty, (Texture)EditorGUIUtility.Load("Assets/EditorDefaultResources/empty.png"));
@@ -33,10 +36,22 @@ namespace LogicGame
 
         }
 
+        private void Update()
+        {
+            
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.update -= Update;
+        }
+
         private ElementTypes _currentSelected = ElementTypes.Empty;
 
         public override void OnInspectorGUI()
         {
+            GUI.skin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene); //set skin to scene skin to troubleshoot
+
             base.OnInspectorGUI();
             GUILayout.Label("Current Selected : " + _currentSelected.ToString());
 
@@ -63,7 +78,7 @@ namespace LogicGame
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             var count = 0;
-            foreach(KeyValuePair<ElementTypes,Texture> e in _textureHolder)
+            foreach(var e in _textureHolder)
             {
                 count++;
                 if (GUILayout.Button(e.Value, GUILayout.Width(50), GUILayout.Height(50)))
