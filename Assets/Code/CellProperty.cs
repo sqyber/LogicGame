@@ -4,258 +4,226 @@ namespace LogicGame
     using UnityEngine;
 
     public class CellProperty : MonoBehaviour
-{
-    bool destroysObject;
-    bool isWin;
-    bool isPlayer;
-    public ElementTypes Element { get; private set; }
-
-    public bool IsStop { get; private set; }
-
-    public bool IsPushable { get; private set; }
-
-    public int CurrentRow { get; private set; }
-
-    public int CurrentCol { get; private set; }
-
-    private SpriteRenderer _spriteRenderer;
-
-
-    private void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+        private bool destroysObject;
+        private bool isWin;
+        private bool isPlayer;
+        public ElementTypes Element { get; private set; }
 
-    public void AssignInfo(int r, int c, ElementTypes e)
-    {
-        CurrentRow = r;
-        CurrentCol = c;
-        Element = e;
-        ChangeSprite();
-        switch (e)
+        public bool IsStop { get; private set; }
+
+        public bool IsPushable { get; private set; }
+
+        public int CurrentRow { get; private set; }
+
+        public int CurrentCol { get; private set; }
+
+        private SpriteRenderer _spriteRenderer;
+
+
+        private void Awake()
         {
-            case ElementTypes.Wall:
-                IsStop = true;
-                break;
-            case ElementTypes.Player:
-                isPlayer = true;
-                _spriteRenderer.sortingOrder = 100;
-                break;
+            _spriteRenderer = GetComponent<SpriteRenderer>();
         }
-    }
 
-
-    public void Initialize()
-    {
-        IsPushable = false;
-        destroysObject = false;
-        isWin = false;
-        isPlayer = false;
-        IsStop = false;
-
-        if ((int)Element >= 99)
+        public void AssignInfo(int r, int c, ElementTypes e)
         {
-            IsPushable = true;
-        }
-    }
-
-    private void ChangeSprite()
-    {
-        Sprite s = GridMaker.instance.spriteLibrary.Find(x => x.element == Element).sprite;
-
-        _spriteRenderer.sprite = s;
-
-        if (isPlayer || IsPushable)
-        {
-            _spriteRenderer.sortingOrder = 100;
-        }
-        else
-        {
-            _spriteRenderer.sortingOrder = 10;
-        }
-    }
-
-
-    public void ChangeObject(CellProperty c)
-    {
-        Element = c.Element;
-         IsPushable = c.IsPushable;
-         destroysObject = c.destroysObject;
-         isWin = c.isWin;
-         isPlayer = c.isPlayer;
-         IsStop = c.IsStop;
-        ChangeSprite();
-    }
-
-
-    public void IsPlayer(bool isP)
-    {
-        isPlayer = isP;
-    }
-
-    public void IsItStop(bool isS)
-    {
-        IsStop = isS;
-    }
-
-    public void IsItWin(bool isW)
-    {
-        isWin = isW;
-    }
-    public void IsItPushable(bool isPush)
-    {
-        IsPushable = isPush;
-    }
-    public void IsItDestroy(bool isD)
-    {
-        destroysObject = isD;
-    }
-
-    private void Update()
-    {
-        CheckDestroy();
-        if (isPlayer)
-        {
-            
-            if (Input.GetKeyDown(KeyCode.RightArrow) && CurrentCol + 1 < GridMaker.instance.Cols && !GridMaker.instance.IsStop(CurrentRow, CurrentCol + 1,Vector2.right))
+            CurrentRow = r;
+            CurrentCol = c;
+            Element = e;
+            ChangeSprite();
+            switch (e)
             {
-                List<GameObject> movingObject = new List<GameObject>();
-                movingObject.Add(this.gameObject);
+                case ElementTypes.Wall:
+                    IsStop = true;
+                    break;
+                case ElementTypes.Player:
+                    isPlayer = true;
+                    _spriteRenderer.sortingOrder = 100;
+                    break;
+            }
+        }
 
-                for (int c = CurrentCol + 1; c < GridMaker.instance.Cols-1; c++)
-                {
+
+        public void Initialize()
+        {
+            IsPushable = false;
+            destroysObject = false;
+            isWin = false;
+            isPlayer = false;
+            IsStop = false;
+
+            if ((int)Element >= 99) IsPushable = true;
+        }
+
+        private void ChangeSprite()
+        {
+            var s = GridMaker.instance.spriteLibrary.Find(x => x.element == Element).sprite;
+
+            _spriteRenderer.sprite = s;
+
+            if (isPlayer || IsPushable)
+                _spriteRenderer.sortingOrder = 100;
+            else
+                _spriteRenderer.sortingOrder = 10;
+        }
+
+
+        public void ChangeObject(CellProperty c)
+        {
+            Element = c.Element;
+            IsPushable = c.IsPushable;
+            destroysObject = c.destroysObject;
+            isWin = c.isWin;
+            isPlayer = c.isPlayer;
+            IsStop = c.IsStop;
+            ChangeSprite();
+        }
+
+
+        public void IsPlayer(bool isP)
+        {
+            isPlayer = isP;
+        }
+
+        public void IsItStop(bool isS)
+        {
+            IsStop = isS;
+        }
+
+        public void IsItWin(bool isW)
+        {
+            isWin = isW;
+        }
+
+        public void IsItPushable(bool isPush)
+        {
+            IsPushable = isPush;
+        }
+
+        public void IsItDestroy(bool isD)
+        {
+            destroysObject = isD;
+        }
+
+        private void Update()
+        {
+            CheckDestroy();
+            if (!isPlayer) return;
+            if (Input.GetKeyDown(KeyCode.RightArrow) && CurrentCol + 1 < GridMaker.instance.Cols &&
+                !GridMaker.instance.IsStop(CurrentRow, CurrentCol + 1, Vector2.right))
+            {
+                var movingObject = new List<GameObject>();
+                movingObject.Add(gameObject);
+
+                for (var c = CurrentCol + 1; c < GridMaker.instance.Cols - 1; c++)
                     if (GridMaker.instance.IsTherePushableObjectAt(CurrentRow, c))
-                    {
                         movingObject.Add(GridMaker.instance.GetPushableObjectAt(CurrentRow, c));
-                    }
                     else
-                    {
                         break;
-                    }
-                }
-                foreach (GameObject g in movingObject)
+                foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x + 1, g.transform.position.y, g.transform.position.z);
-                    g.GetComponent < CellProperty>().CurrentCol++;
+                    g.transform.position = new Vector3(g.transform.position.x + 1, g.transform.position.y,
+                        g.transform.position.z);
+                    g.GetComponent<CellProperty>().CurrentCol++;
                 }
+
                 GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) && CurrentCol - 1 >= 0 && !GridMaker.instance.IsStop(CurrentRow, CurrentCol - 1, Vector2.left))
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) && CurrentCol - 1 >= 0 &&
+                     !GridMaker.instance.IsStop(CurrentRow, CurrentCol - 1, Vector2.left))
             {
-                List<GameObject> movingObject = new List<GameObject>();
-                movingObject.Add(this.gameObject);
+                var movingObject = new List<GameObject>();
+                movingObject.Add(gameObject);
 
-                    for (int c = CurrentCol - 1; c>0; c--)
-                    {
-                        if (GridMaker.instance.IsTherePushableObjectAt(CurrentRow, c))
-                        {
-                            movingObject.Add(GridMaker.instance.GetPushableObjectAt(CurrentRow, c));
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                foreach (GameObject g in movingObject)
+                for (var c = CurrentCol - 1; c > 0; c--)
+                    if (GridMaker.instance.IsTherePushableObjectAt(CurrentRow, c))
+                        movingObject.Add(GridMaker.instance.GetPushableObjectAt(CurrentRow, c));
+                    else
+                        break;
+                foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x - 1, g.transform.position.y, g.transform.position.z);
+                    g.transform.position = new Vector3(g.transform.position.x - 1, g.transform.position.y,
+                        g.transform.position.z);
                     g.GetComponent<CellProperty>().CurrentCol--;
                 }
-                    GridMaker.instance.CompileRules();
+
+                GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow) && CurrentRow + 1 < GridMaker.instance.Rows && !GridMaker.instance.IsStop(CurrentRow+1, CurrentCol, Vector2.up))
+            else if (Input.GetKeyDown(KeyCode.UpArrow) && CurrentRow + 1 < GridMaker.instance.Rows &&
+                     !GridMaker.instance.IsStop(CurrentRow + 1, CurrentCol, Vector2.up))
             {
-                List<GameObject> movingObject = new List<GameObject>();
-                movingObject.Add(this.gameObject);
+                var movingObject = new List<GameObject>();
+                movingObject.Add(gameObject);
 
-                for (int r = CurrentRow + 1; r<GridMaker.instance.Rows-1; r++)
-                {
+                for (var r = CurrentRow + 1; r < GridMaker.instance.Rows - 1; r++)
                     if (GridMaker.instance.IsTherePushableObjectAt(r, CurrentCol))
-                    {
                         movingObject.Add(GridMaker.instance.GetPushableObjectAt(r, CurrentCol));
-                    }
                     else
-                    {
                         break;
-                    }
-                }
-                foreach (GameObject g in movingObject)
+                foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y + 1, g.transform.position.z);
+                    g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y + 1,
+                        g.transform.position.z);
                     g.GetComponent<CellProperty>().CurrentRow++;
                 }
-                    GridMaker.instance.CompileRules();
+
+                GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) && CurrentRow - 1 >= 0 && !GridMaker.instance.IsStop(CurrentRow - 1, CurrentCol, Vector2.down))
+            else if (Input.GetKeyDown(KeyCode.DownArrow) && CurrentRow - 1 >= 0 &&
+                     !GridMaker.instance.IsStop(CurrentRow - 1, CurrentCol, Vector2.down))
             {
-                List<GameObject> movingObject = new List<GameObject>();
-                movingObject.Add(this.gameObject);
+                var movingObject = new List<GameObject>();
+                movingObject.Add(gameObject);
 
-                for (int r = CurrentRow - 1; r >=0; r--)
-                {
+                for (var r = CurrentRow - 1; r >= 0; r--)
                     if (GridMaker.instance.IsTherePushableObjectAt(r, CurrentCol))
-                    {
                         movingObject.Add(GridMaker.instance.GetPushableObjectAt(r, CurrentCol));
-                    }
                     else
-                    {
                         break;
-                    }
-                }
-                foreach (GameObject g in movingObject)
+                foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y - 1, g.transform.position.z);
+                    g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y - 1,
+                        g.transform.position.z);
                     g.GetComponent<CellProperty>().CurrentRow--;
                 }
-                    GridMaker.instance.CompileRules();
+
+                GridMaker.instance.CompileRules();
                 CheckWin();
             }
         }
-    }
 
-    private void CheckWin()
-    {
-        List<GameObject> objectsAtPlayerPosition = GridMaker.instance.FindObjectsAt(CurrentRow, CurrentCol);
-
-        foreach(GameObject g in objectsAtPlayerPosition)
+        private void CheckWin()
         {
-            if (g.GetComponent<CellProperty>().isWin)
-            {
-                Debug.Log("Player Won!");
-                PlayerPrefs.SetInt("Level", PlayerPrefs.GetInt("Level") + 1);
-                GridMaker.instance.NextLevel();
-            }
-        }
-    }
+            var objectsAtPlayerPosition = GridMaker.instance.FindObjectsAt(CurrentRow, CurrentCol);
 
-
-    private void CheckDestroy()
-    {
-        List<GameObject> objectsAtPosition = GridMaker.instance.FindObjectsAt(CurrentRow, CurrentCol);
-        bool destroys = false;
-        bool normalObject = false;
-        foreach(GameObject g in objectsAtPosition)
-        {
-            if (!g.GetComponent<CellProperty>().destroysObject)
-            {
-                normalObject = true;
-            }
-            if (g.GetComponent<CellProperty>().destroysObject)
-            {
-                destroys = true;
-            }
+            foreach (var g in objectsAtPlayerPosition)
+                if (g.GetComponent<CellProperty>().isWin)
+                {
+                    Debug.Log("Player Won!");
+                    PlayerPrefs.SetInt("Level", PlayerPrefs.GetInt("Level") + 1);
+                    GridMaker.instance.NextLevel();
+                }
         }
 
-        if (destroys&&normalObject)
+
+        private void CheckDestroy()
         {
-            foreach (GameObject g in objectsAtPosition)
+            var objectsAtPosition = GridMaker.instance.FindObjectsAt(CurrentRow, CurrentCol);
+            var destroys = false;
+            var normalObject = false;
+            foreach (var g in objectsAtPosition)
             {
-                Destroy(g);
+                if (!g.GetComponent<CellProperty>().destroysObject) normalObject = true;
+                if (g.GetComponent<CellProperty>().destroysObject) destroys = true;
             }
+
+            if (destroys && normalObject)
+                foreach (var g in objectsAtPosition)
+                    Destroy(g);
         }
     }
-}
 }
