@@ -221,9 +221,11 @@ namespace LogicGame
                 if (g.GetComponent<CellProperty>().destroysObject) destroys = true;
             }
 
-            if (destroys && normalObject)
+            if (!destroys || !normalObject) return;
+            {
                 foreach (var g in objectsAtPosition)
                     Destroy(g);
+            }
         }
     }
 }

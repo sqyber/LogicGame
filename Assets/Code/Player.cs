@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace LogicGame
 {
@@ -19,12 +15,6 @@ namespace LogicGame
 
         private void Update()
         {
-/*
-           //rotate the sprite towards move direction
-           Vector3 relativePos = target.position - transform.position;
-           Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.back);
-           transform.rotation = rotation;
-          */
 
             if (Input.GetKeyDown(KeyCode.D))
             {
