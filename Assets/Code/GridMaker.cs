@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,7 +15,6 @@ namespace LogicGame
         public List<SpriteLibrary> spriteLibrary = new();
         public static GridMaker instance = null;
         public GameObject boundary;
-        public CellProperty cellProperty;
         private int currentLevel = 0;
 
 
@@ -59,18 +59,18 @@ namespace LogicGame
 
 
             
-            //TODO
+            //get cell properties from CellProperty.cs Assign them to the cell
             var counter = 0;
-            for (var i = 0; i < levelHolder[currentLevel].level.Count; i++)
+            foreach (var t in levelHolder[currentLevel].level)
             {
-                if (levelHolder[currentLevel].level[i] != ElementTypes.Empty)
+                if (t != ElementTypes.Empty)
                 {
                     var g = Instantiate(cellHolder, new Vector3(counter % Cols, counter / Rows, 0), Quaternion.identity);
                     cells.Add(g);
-                    var currentElement = levelHolder[currentLevel].level[i];
+                    var currentElement = t;
 
                     g.GetComponent<CellProperty>().AssignInfo(counter / Rows, counter % Cols, currentElement);
-                    Debug.Log( currentElement + "R : " + i / Rows + " C : " + i % Cols);
+                    //Debug.Log( currentElement + "R : " + i / Rows + " C : " + i % Cols);
 
                 }
 
@@ -78,6 +78,7 @@ namespace LogicGame
             }
         }
 
+        /*
         public Sprite ReturnSpriteOf(ElementTypes e)
         {
             return spriteLibrary.Find(x => x.element == e).sprite;
@@ -87,8 +88,9 @@ namespace LogicGame
         {
             return new Vector2(i % Cols, i / Rows);
         }
+        */
 
-
+        //Logic for pushing objects
         public bool IsStop(int r, int c, Vector2 dir)
         {
             while (true)
@@ -140,22 +142,18 @@ namespace LogicGame
         public void CompileRules()
         {
             ResetData();
-            foreach (var t in cells)
-                if (t != null)
-                {
-                    var currentcell = t.GetComponent<CellProperty>();
-
-                    if (!IsElementStartingWord(currentcell.Element)) continue;
-
-                    if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow - 1, currentcell.CurrentCol),
-                            ElementTypes.IsWord))
-                        if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow - 2, currentcell.CurrentCol)))
-                            Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow - 2, currentcell.CurrentCol));
-                    if (DoesListContainElement(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol + 1),
-                            ElementTypes.IsWord))
-                        if (DoesListContainWord(FindObjectsAt(currentcell.CurrentRow, currentcell.CurrentCol + 2)))
-                            Rule(currentcell.Element, ReturnWordAt(currentcell.CurrentRow, currentcell.CurrentCol + 2));
-                }
+            foreach (var currentCell in from t in cells where t != null select t.GetComponent<CellProperty>()
+                     into currentcell where IsElementStartingWord(currentcell.Element) select currentcell)
+            {
+                if (DoesListContainElement(FindObjectsAt(currentCell.CurrentRow - 1, currentCell.CurrentCol),
+                        ElementTypes.IsWord))
+                    if (DoesListContainWord(FindObjectsAt(currentCell.CurrentRow - 2, currentCell.CurrentCol)))
+                        Rule(currentCell.Element, ReturnWordAt(currentCell.CurrentRow - 2, currentCell.CurrentCol));
+                if (DoesListContainElement(FindObjectsAt(currentCell.CurrentRow, currentCell.CurrentCol + 1),
+                        ElementTypes.IsWord))
+                    if (DoesListContainWord(FindObjectsAt(currentCell.CurrentRow, currentCell.CurrentCol + 2)))
+                        Rule(currentCell.Element, ReturnWordAt(currentCell.CurrentRow, currentCell.CurrentCol + 2));
+            }
         }
 
 
