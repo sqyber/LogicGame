@@ -5,6 +5,7 @@ namespace LogicGame
     public class Player : MonoBehaviour
     {
         public int initialRow, initialCol;
+        private Transform playerTransform;
         [SerializeField] private Rigidbody2D rb;
 
         private void Start()

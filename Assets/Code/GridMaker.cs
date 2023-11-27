@@ -14,8 +14,11 @@ namespace LogicGame
         public List<SpriteLibrary> spriteLibrary = new();
         public static GridMaker instance = null;
         public GameObject boundary;
+        public CellProperty cellProperty;
         private int currentLevel = 0;
 
+
+        
 
         public int Rows { get; private set; }
         public int Cols { get; private set; }
@@ -55,17 +58,20 @@ namespace LogicGame
                     Instantiate(boundary, new Vector3(gI, gJ, 0), Quaternion.identity);
 
 
+            
+            //TODO
             var counter = 0;
             for (var i = 0; i < levelHolder[currentLevel].level.Count; i++)
             {
                 if (levelHolder[currentLevel].level[i] != ElementTypes.Empty)
                 {
-                    var g = Instantiate(cellHolder, new Vector3(counter % Cols, counter / Rows, 0),
-                        Quaternion.identity);
+                    var g = Instantiate(cellHolder, new Vector3(counter % Cols, counter / Rows, 0), Quaternion.identity);
                     cells.Add(g);
                     var currentElement = levelHolder[currentLevel].level[i];
 
                     g.GetComponent<CellProperty>().AssignInfo(counter / Rows, counter % Cols, currentElement);
+                    Debug.Log( currentElement + "R : " + i / Rows + " C : " + i % Cols);
+
                 }
 
                 counter++;
@@ -85,30 +91,50 @@ namespace LogicGame
 
         public bool IsStop(int r, int c, Vector2 dir)
         {
-            var isPush = false;
-            int curRow = r, curCol = c;
-            var atRC = FindObjectsAt(curRow, curCol);
-            if (r >= Rows || c >= Cols || r < 0 || c < 0)
-                return true;
-            foreach (var g in atRC)
+            while (true)
             {
-                var currentCell = g.GetComponent<CellProperty>();
+                var isPush = false;
+                int curRow = r, curCol = c;
+                var atRC = FindObjectsAt(curRow, curCol);
+                if (r >= Rows || c >= Cols || r < 0 || c < 0) return true;
+                foreach (var g in atRC)
+                {
+                    var currentCell = g.GetComponent<CellProperty>();
 
-                if (currentCell.IsStop)
-                    return true;
-                else if (currentCell.IsPushable) isPush = true;
+                    if (currentCell.IsStop)
+                        return true;
+                    if (currentCell.IsPushable) isPush = true;
+                }
+
+                if (!isPush) return false;
+
+                if (dir == Vector2.right)
+                {
+                    r = curRow;
+                    c = curCol + 1;
+                    dir = Vector2.right;
+                    continue;
+                }
+
+                if (dir == Vector2.left)
+                {
+                    r = curRow;
+                    c = curCol - 1;
+                    dir = Vector2.left;
+                    continue;
+                }
+
+                if (dir == Vector2.up)
+                {
+                    r = curRow + 1;
+                    c = curCol;
+                    dir = Vector2.up;
+                    continue;
+                }
+
+                return dir != Vector2.down || IsStop(curRow - 1, curCol, Vector2.down);
+                break;
             }
-
-            if (!isPush)
-                return false;
-
-            if (dir == Vector2.right) return IsStop(curRow, curCol + 1, Vector2.right);
-
-            if (dir == Vector2.left) return IsStop(curRow, curCol - 1, Vector2.left);
-
-            if (dir == Vector2.up) return IsStop(curRow + 1, curCol, Vector2.up);
-
-            return dir != Vector2.down || IsStop(curRow - 1, curCol, Vector2.down);
         }
 
         public void CompileRules()
