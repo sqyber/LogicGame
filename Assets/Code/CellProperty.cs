@@ -56,39 +56,23 @@ namespace LogicGame
             _isWin = false;
             _isPlayer = false;
             IsStop = false;
-
-            if ((int)Element >= 14) IsPushable = true;
+            
+            //if the element is a word, set the element to pushable
+            if ((int)Element >= 99) IsPushable = true;
         }
 
         //modify the sprite of the cell based on the element type
         private void ChangeSprite()
         {
-            if (GridMaker.instance != null && GridMaker.instance.spriteLibrary != null)
-            {
-                var elementToFind = ElementTypes.PlayerWord;
-                var foundSprite = GridMaker.instance.spriteLibrary.Find(x => x.element == elementToFind);
+            var s = GridMaker.instance.spriteLibrary.Find(x => x.element == Element).sprite;
 
-                if (foundSprite != null && foundSprite.sprite != null)
-                {
-                    _spriteRenderer.sprite = foundSprite.sprite;
+            _spriteRenderer.sprite = s;
 
-                    if (_isPlayer || IsPushable)
-                        _spriteRenderer.sortingOrder = 100;
-                    else
-                        _spriteRenderer.sortingOrder = 10;
-                }
-                else
-                {
-                    Debug.LogError("Sprite or element not found in the library.");
-                }
-            }
+            if (_isPlayer || IsPushable)
+                _spriteRenderer.sortingOrder = 100;
             else
-            {
-                Debug.LogError("GridMaker instance or spriteLibrary is null.");
-            }
+                _spriteRenderer.sortingOrder = 10;
         }
-
-
 
 
         //Change the cell type

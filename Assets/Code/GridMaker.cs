@@ -80,7 +80,7 @@ namespace LogicGame
             }
         }
 
-        /* Unused 
+       
         public Sprite ReturnSpriteOf(ElementTypes e)
         {
             return spriteLibrary.Find(x => x.element == e).sprite;
@@ -90,7 +90,7 @@ namespace LogicGame
         {
             return new Vector2(i % Cols, i / Rows);
         }
-        */
+        
 
         //Logic for pushing objects
         public bool IsStop(int r, int c, Vector2 dir)

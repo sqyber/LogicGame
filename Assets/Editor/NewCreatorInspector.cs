@@ -54,24 +54,30 @@ namespace LogicGame
             var rows = (int)Mathf.Sqrt(levelCreator.level.Count);
 
             GUILayout.BeginVertical();
-            for (var r = rows - 1; r >= 0; r--)
+            int r;
+            for (r = rows - 1; r >= 0; r--)
             {
-                GUILayout.BeginHorizontal();
-                for (var c = 0; c < rows; c++)
+                // Inside the nested loops for generating buttons
+                for (r = rows - 1; r >= 0; r--)
                 {
-                    var index = c + (rows * r);
-                    var enumProperty = _levelProperty.GetArrayElementAtIndex(index);
-                    var currentEnumValue = (ElementTypes)enumProperty.enumValueIndex;
-                    var texture = _textureHolder[currentEnumValue];
-
-                    if (GUILayout.Button(texture, GUILayout.Width(50), GUILayout.Height(50)))
+                    GUILayout.BeginHorizontal();
+                    for (var c = 0; c < rows; c++)
                     {
-                        enumProperty.enumValueIndex = (int)_currentSelected;
-                        serializedObject.ApplyModifiedProperties();
-                    }
+                        var index = c + (rows * r);
+                        var enumProperty = _levelProperty.GetArrayElementAtIndex(index);
+                        var currentEnumValue = (ElementTypes)enumProperty.enumValueIndex;
+                        var texture = _textureHolder[currentEnumValue];
 
+                        if (GUILayout.Button(texture, GUILayout.Width(50), GUILayout.Height(50)))
+                        {
+                            // Handle setting enum value when button is clicked
+                            enumProperty.enumValueIndex = (int)_currentSelected;
+                            serializedObject.ApplyModifiedProperties();
+                        }
+                    }
+                    GUILayout.EndHorizontal();
                 }
-                GUILayout.EndHorizontal();
+
             }
             GUILayout.EndVertical();
 
