@@ -271,7 +271,7 @@ namespace LogicGame
             foreach (var g in l)
             {
                 var e = g.GetComponent<CellProperty>().Element;
-                if ((int)e >= 100) return e;
+                if ((int)e >= 7) return e;
             }
 
             return ElementTypes.Empty;
