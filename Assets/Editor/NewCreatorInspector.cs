@@ -40,7 +40,7 @@ namespace LogicGame
         {
             serializedObject.Update();
 
-            GUI.skin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene);
+           // GUI.skin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene);
             base.OnInspectorGUI();
 
             GUILayout.Label("Current Selected: " + _currentSelected.ToString());
