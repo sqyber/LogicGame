@@ -36,11 +36,6 @@ namespace LogicGame
 
         }
 
-        private void OnDisable()
-        {
-            // Clean up any necessary resources or event listeners here
-        }
-
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -57,7 +52,7 @@ namespace LogicGame
             int r;
             for (r = rows - 1; r >= 0; r--)
             {
-                // Inside the nested loops for generating buttons
+                // for generating the grid
                 for (r = rows - 1; r >= 0; r--)
                 {
                     GUILayout.BeginHorizontal();
@@ -81,6 +76,7 @@ namespace LogicGame
             }
             GUILayout.EndVertical();
 
+            // for generating the lower set of buttons to place on the grid
             GUILayout.Space(20);
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();

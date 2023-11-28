@@ -72,7 +72,7 @@ namespace LogicGame
                     var currentElement = t;
 
                     g.GetComponent<CellProperty>().AssignInfo(counter / Rows, counter % Cols, currentElement);
-                    //Debug.Log( currentElement + "R : " + i / Rows + " C : " + i % Cols);
+                   // Debug.Log( currentElement + "R : " +  Rows + " C : " + Cols); //Grid generation debugging
 
                 }
 
@@ -99,9 +99,9 @@ namespace LogicGame
             {
                 var isPush = false;
                 int curRow = r, curCol = c;
-                var atRC = FindObjectsAt(curRow, curCol);
+                var atRc = FindObjectsAt(curRow, curCol);
                 if (r >= Rows || c >= Cols || r < 0 || c < 0) return true;
-                foreach (var g in atRC)
+                foreach (var g in atRc)
                 {
                     var currentCell = g.GetComponent<CellProperty>();
 
@@ -179,7 +179,8 @@ namespace LogicGame
                 var cellsOf = GetAllCellsOf(GetActualObjectFromWord(a));
                 for (var i = 0; i < cellsOf.Count; i++) cellsOf[i].ChangeObject(GetCellOf(GetActualObjectFromWord(b)));
             }
-            else if ((int)b >= 150)
+            //Suffix words check
+            else if ((int)b >= 12)
             {
                 //Properties change
                 if (b == ElementTypes.YouWord)
@@ -252,7 +253,7 @@ namespace LogicGame
 
         private bool IsElementStartingWord(ElementTypes e)
         {
-            if ((int)e >= 100 && (int)e < 150) return true;
+            if ((int)e >= 7 && (int)e < 12) return true;
             return false;
         }
 
@@ -287,7 +288,7 @@ namespace LogicGame
         private bool DoesListContainWord(List<GameObject> l)
         {
             foreach (var g in l)
-                if ((int)g.GetComponent<CellProperty>().Element >= 100)
+                if ((int)g.GetComponent<CellProperty>().Element >= 7)
                     return true;
             return false;
         }

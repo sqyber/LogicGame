@@ -12,14 +12,14 @@ namespace LogicGame
         Flag,
         Hazard,
 
-        IsWord = 99,
-        PlayerWord =100,
+        IsWord =6,
+        PlayerWord=7,
         WallWord,
         FlagWord,
         RockWord,
         HazardWord,
 
-        YouWord=200,
+        YouWord =12,
         PushWord,
         WinWord,
         StopWord,

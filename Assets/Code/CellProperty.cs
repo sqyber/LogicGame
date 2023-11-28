@@ -58,7 +58,7 @@ namespace LogicGame
             IsStop = false;
             
             //if the element is a word, set the element to pushable
-            if ((int)Element >= 99) IsPushable = true;
+            if ((int)Element >= 6) IsPushable = true;
         }
 
         //modify the sprite of the cell based on the element type

@@ -157,7 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellHolder: {fileID: 1824727024621867669, guid: d5f4ded1150bbf74c8975f9bcfccb01f, type: 3}
   levelHolder:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: e80a68c69e0ce604783d5e540113f5dc, type: 2}
   cells: []
   spriteLibrary:
   - element: 0
@@ -172,27 +172,27 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 777e91e3df04c204a9e99ca46a0ff5b3, type: 3}
   - element: 5
     sprite: {fileID: 21300000, guid: fc1209bf8f2588748a41e8e12f47daac, type: 3}
-  - element: 100
+  - element: 6
     sprite: {fileID: 21300000, guid: e44b8c2da66295b4c911ada9e64da066, type: 3}
-  - element: 101
+  - element: 7
     sprite: {fileID: 21300000, guid: de1c83d2d76ff1c4891342126e18a23c, type: 3}
-  - element: 102
+  - element: 8
     sprite: {fileID: 21300000, guid: 0dcc17b08681b8342891f29ffb65acac, type: 3}
-  - element: 103
+  - element: 9
     sprite: {fileID: 21300000, guid: 8ac476bbf401a9c4385214dca8f88ac5, type: 3}
-  - element: 104
+  - element: 10
     sprite: {fileID: 21300000, guid: 0fc08af0adefe924aabc65ea9e99fd1a, type: 3}
-  - element: 104
+  - element: 11
     sprite: {fileID: 21300000, guid: 46a968915fd20f54cae6600f3a7a95ea, type: 3}
-  - element: 200
+  - element: 12
     sprite: {fileID: 21300000, guid: 8f5f1e48f6a93f6488c44e514adf0d36, type: 3}
-  - element: 201
+  - element: 13
     sprite: {fileID: 21300000, guid: 28e2a647e20b1ad46af1a6e7c9bfd428, type: 3}
-  - element: 202
+  - element: 14
     sprite: {fileID: 21300000, guid: bafc03078202f9046a22b1ded0ff68e3, type: 3}
-  - element: 203
+  - element: 15
     sprite: {fileID: 21300000, guid: d51783ff5bce9f64cb113ff709b57a6d, type: 3}
-  - element: 204
+  - element: 16
     sprite: {fileID: 21300000, guid: 2315f01bc904863418a9f8fd8cb61b4b, type: 3}
   boundary: {fileID: 8374267159209293514, guid: 17bbb3dada7149a45aab543716f79059, type: 3}
 --- !u!81 &680374681
