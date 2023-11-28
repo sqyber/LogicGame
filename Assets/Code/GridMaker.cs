@@ -15,7 +15,7 @@ namespace LogicGame
         public List<SpriteLibrary> spriteLibrary = new();
         public static GridMaker instance = null;
         public GameObject boundary;
-        private int currentLevel = 0;
+        private int _currentLevel = 0;
 
 
         
@@ -32,12 +32,14 @@ namespace LogicGame
         }
 
         private void Start()
-        {
-            if (!PlayerPrefs.HasKey("Level")) PlayerPrefs.SetInt("Level", 0);
-            currentLevel = PlayerPrefs.GetInt("Level");
+        { 
+            //TODO change back when done with levels
+            // if (!PlayerPrefs.HasKey("Level")) PlayerPrefs.SetInt("Level", 0);
+            PlayerPrefs.SetInt("Level", 0);
+            _currentLevel = PlayerPrefs.GetInt("Level");
 
 
-            float count = levelHolder[currentLevel].level.Count;
+            float count = levelHolder[_currentLevel].level.Count;
             Rows = (int)Mathf.Sqrt(count);
             Cols = Rows;
 
@@ -50,7 +52,7 @@ namespace LogicGame
             if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        public void CreateGrid()
+        private void CreateGrid()
         {
             for (var gI = -1; gI <= Rows; gI += 1)
             for (var gJ = -1; gJ <= Rows; gJ += 1)
@@ -61,7 +63,7 @@ namespace LogicGame
             
             //get cell properties from CellProperty.cs Assign them to the cell
             var counter = 0;
-            foreach (var t in levelHolder[currentLevel].level)
+            foreach (var t in levelHolder[_currentLevel].level)
             {
                 if (t != ElementTypes.Empty)
                 {
@@ -78,7 +80,7 @@ namespace LogicGame
             }
         }
 
-        /*
+        /* Unused 
         public Sprite ReturnSpriteOf(ElementTypes e)
         {
             return spriteLibrary.Find(x => x.element == e).sprite;
@@ -135,7 +137,6 @@ namespace LogicGame
                 }
 
                 return dir != Vector2.down || IsStop(curRow - 1, curCol, Vector2.down);
-                break;
             }
         }
 
@@ -143,7 +144,7 @@ namespace LogicGame
         {
             ResetData();
             foreach (var currentCell in from t in cells where t != null select t.GetComponent<CellProperty>()
-                     into currentcell where IsElementStartingWord(currentcell.Element) select currentcell)
+                     into currentCell where IsElementStartingWord(currentCell.Element) select currentCell)
             {
                 if (DoesListContainElement(FindObjectsAt(currentCell.CurrentRow - 1, currentCell.CurrentCol),
                         ElementTypes.IsWord))
@@ -293,11 +294,10 @@ namespace LogicGame
 
 
         
-        //Not in use
+        
         public bool IsElementIsWord(ElementTypes e)
         {
-            if ((int)e == 99) return true;
-            return false;
+            return (int)e == 99;
         }
 
         public void NextLevel()

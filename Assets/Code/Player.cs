@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace LogicGame
 {
+    
+    
+    //TODO Remove redundant script (This)
+    
     public class Player : MonoBehaviour
     {
         public int initialRow, initialCol;

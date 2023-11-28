@@ -5,9 +5,9 @@ namespace LogicGame
 
     public class CellProperty : MonoBehaviour
     {
-        private bool destroysObject;
-        private bool isWin;
-        private bool isPlayer;
+        private bool _destroysObject;
+        private bool _isWin;
+        private bool _isPlayer;
         public ElementTypes Element { get; private set; }
 
         public bool IsStop { get; private set; }
@@ -21,6 +21,10 @@ namespace LogicGame
         private SpriteRenderer _spriteRenderer;
 
 
+        /// <summary>
+        /// Handles the initialization of the cell and movement for cells which are player or pushable
+        /// Also checks various conditions for which alter the cells behaviour
+        /// </summary>
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -38,7 +42,7 @@ namespace LogicGame
                     IsStop = true;
                     break;
                 case ElementTypes.Player:
-                    isPlayer = true;
+                    _isPlayer = true;
                     _spriteRenderer.sortingOrder = 100;
                     break;
             }
@@ -48,34 +52,36 @@ namespace LogicGame
         public void Initialize()
         {
             IsPushable = false;
-            destroysObject = false;
-            isWin = false;
-            isPlayer = false;
+            _destroysObject = false;
+            _isWin = false;
+            _isPlayer = false;
             IsStop = false;
 
             if ((int)Element >= 99) IsPushable = true;
         }
 
+        //modify the sprite of the cell based on the element type
         private void ChangeSprite()
         {
             var s = GridMaker.instance.spriteLibrary.Find(x => x.element == Element).sprite;
 
             _spriteRenderer.sprite = s;
 
-            if (isPlayer || IsPushable)
+            if (_isPlayer || IsPushable)
                 _spriteRenderer.sortingOrder = 100;
             else
                 _spriteRenderer.sortingOrder = 10;
         }
 
 
+        //Change the cell type
         public void ChangeObject(CellProperty c)
         {
             Element = c.Element;
             IsPushable = c.IsPushable;
-            destroysObject = c.destroysObject;
-            isWin = c.isWin;
-            isPlayer = c.isPlayer;
+            _destroysObject = c._destroysObject;
+            _isWin = c._isWin;
+            _isPlayer = c._isPlayer;
             IsStop = c.IsStop;
             ChangeSprite();
         }
@@ -83,7 +89,7 @@ namespace LogicGame
 
         public void IsPlayer(bool isP)
         {
-            isPlayer = isP;
+            _isPlayer = isP;
         }
 
         public void IsItStop(bool isS)
@@ -93,7 +99,7 @@ namespace LogicGame
 
         public void IsItWin(bool isW)
         {
-            isWin = isW;
+            _isWin = isW;
         }
 
         public void IsItPushable(bool isPush)
@@ -103,16 +109,18 @@ namespace LogicGame
 
         public void IsItDestroy(bool isD)
         {
-            destroysObject = isD;
+            _destroysObject = isD;
         }
 
         private void Update()
         {
+            //Movement logic for each direction with all the cell type checks
             CheckDestroy();
-            if (!isPlayer) return;
-            if (Input.GetKeyDown(KeyCode.RightArrow) && CurrentCol + 1 < GridMaker.instance.Cols &&
+            if (!_isPlayer) return;
+            if (Input.GetKeyDown(KeyCode.D) && CurrentCol + 1 < GridMaker.instance.Cols &&
                 !GridMaker.instance.IsStop(CurrentRow, CurrentCol + 1, Vector2.right))
             {
+                transform.right = Vector3.right;
                 var movingObject = new List<GameObject>();
                 movingObject.Add(gameObject);
 
@@ -123,17 +131,20 @@ namespace LogicGame
                         break;
                 foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x + 1, g.transform.position.y,
-                        g.transform.position.z);
+                    var position = g.transform.position;
+                    position = new Vector3(position.x + 1, position.y,
+                        position.z);
+                    g.transform.position = position;
                     g.GetComponent<CellProperty>().CurrentCol++;
                 }
 
                 GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) && CurrentCol - 1 >= 0 &&
+            else if (Input.GetKeyDown(KeyCode.A) && CurrentCol - 1 >= 0 &&
                      !GridMaker.instance.IsStop(CurrentRow, CurrentCol - 1, Vector2.left))
             {
+                transform.right = Vector3.left;
                 var movingObject = new List<GameObject>();
                 movingObject.Add(gameObject);
 
@@ -144,19 +155,21 @@ namespace LogicGame
                         break;
                 foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x - 1, g.transform.position.y,
-                        g.transform.position.z);
+                    var position = g.transform.position;
+                    position = new Vector3(position.x - 1, position.y,
+                        position.z);
+                    g.transform.position = position;
                     g.GetComponent<CellProperty>().CurrentCol--;
                 }
 
                 GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow) && CurrentRow + 1 < GridMaker.instance.Rows &&
+            else if (Input.GetKeyDown(KeyCode.W) && CurrentRow + 1 < GridMaker.instance.Rows &&
                      !GridMaker.instance.IsStop(CurrentRow + 1, CurrentCol, Vector2.up))
             {
-                var movingObject = new List<GameObject>();
-                movingObject.Add(gameObject);
+                transform.right = Vector3.up;
+                var movingObject = new List<GameObject> { gameObject };
 
                 for (var r = CurrentRow + 1; r < GridMaker.instance.Rows - 1; r++)
                     if (GridMaker.instance.IsTherePushableObjectAt(r, CurrentCol))
@@ -165,17 +178,20 @@ namespace LogicGame
                         break;
                 foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y + 1,
-                        g.transform.position.z);
+                    var position = g.transform.position;
+                    position = new Vector3(position.x, position.y + 1,
+                        position.z);
+                    g.transform.position = position;
                     g.GetComponent<CellProperty>().CurrentRow++;
                 }
 
                 GridMaker.instance.CompileRules();
                 CheckWin();
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) && CurrentRow - 1 >= 0 &&
+            else if (Input.GetKeyDown(KeyCode.S) && CurrentRow - 1 >= 0 &&
                      !GridMaker.instance.IsStop(CurrentRow - 1, CurrentCol, Vector2.down))
             {
+                transform.right = Vector3.down;
                 var movingObject = new List<GameObject>();
                 movingObject.Add(gameObject);
 
@@ -186,8 +202,10 @@ namespace LogicGame
                         break;
                 foreach (var g in movingObject)
                 {
-                    g.transform.position = new Vector3(g.transform.position.x, g.transform.position.y - 1,
-                        g.transform.position.z);
+                    var position = g.transform.position;
+                    position = new Vector3(position.x, position.y - 1,
+                        position.z);
+                    g.transform.position = position;
                     g.GetComponent<CellProperty>().CurrentRow--;
                 }
 
@@ -201,9 +219,9 @@ namespace LogicGame
             var objectsAtPlayerPosition = GridMaker.instance.FindObjectsAt(CurrentRow, CurrentCol);
 
             foreach (var g in objectsAtPlayerPosition)
-                if (g.GetComponent<CellProperty>().isWin)
+                if (g.GetComponent<CellProperty>()._isWin)
                 {
-                    Debug.Log("Player Won!");
+                    //Debug.Log("Player Won!");
                     PlayerPrefs.SetInt("Level", PlayerPrefs.GetInt("Level") + 1);
                     GridMaker.instance.NextLevel();
                 }
@@ -217,8 +235,8 @@ namespace LogicGame
             var normalObject = false;
             foreach (var g in objectsAtPosition)
             {
-                if (!g.GetComponent<CellProperty>().destroysObject) normalObject = true;
-                if (g.GetComponent<CellProperty>().destroysObject) destroys = true;
+                if (!g.GetComponent<CellProperty>()._destroysObject) normalObject = true;
+                if (g.GetComponent<CellProperty>()._destroysObject) destroys = true;
             }
 
             if (!destroys || !normalObject) return;
