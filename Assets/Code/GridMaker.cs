@@ -10,11 +10,13 @@ namespace LogicGame
     public class GridMaker : MonoBehaviour
     {
         public GameObject cellHolder;
+        public GameObject boundary;
+        
         public List<LevelCreator> levelHolder = new();
         public List<GameObject> cells = new();
         public List<SpriteLibrary> spriteLibrary = new();
+        
         public static GridMaker instance = null;
-        public GameObject boundary;
         private int _currentLevel = 0;
 
 
@@ -49,9 +51,11 @@ namespace LogicGame
 
         private void Update()
         {
+            //Reset the level
             if (Input.GetKeyDown(KeyCode.R)) SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
+        //creates the grid on the scene
         private void CreateGrid()
         {
             for (var gI = -1; gI <= Rows; gI += 1)

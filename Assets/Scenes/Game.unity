@@ -156,6 +156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellHolder: {fileID: 1824727024621867669, guid: d5f4ded1150bbf74c8975f9bcfccb01f, type: 3}
+  boundary: {fileID: 8374267159209293514, guid: 17bbb3dada7149a45aab543716f79059, type: 3}
   levelHolder:
   - {fileID: 11400000, guid: e80a68c69e0ce604783d5e540113f5dc, type: 2}
   cells: []
@@ -194,7 +195,6 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: d51783ff5bce9f64cb113ff709b57a6d, type: 3}
   - element: 16
     sprite: {fileID: 21300000, guid: 2315f01bc904863418a9f8fd8cb61b4b, type: 3}
-  boundary: {fileID: 8374267159209293514, guid: 17bbb3dada7149a45aab543716f79059, type: 3}
 --- !u!81 &680374681
 AudioListener:
   m_ObjectHideFlags: 0
@@ -213,7 +213,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
+  m_BackGroundColor: {r: 0.122641504, g: 0.122641504, b: 0.122641504, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
