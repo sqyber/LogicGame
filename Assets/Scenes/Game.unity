@@ -159,6 +159,9 @@ MonoBehaviour:
   boundary: {fileID: 8374267159209293514, guid: 17bbb3dada7149a45aab543716f79059, type: 3}
   levelHolder:
   - {fileID: 11400000, guid: e80a68c69e0ce604783d5e540113f5dc, type: 2}
+  - {fileID: 11400000, guid: 4a6bd38651fbee84aaddc35d265f84a8, type: 2}
+  - {fileID: 11400000, guid: 77bdfdd558a2c8148960b69d96f87b6f, type: 2}
+  - {fileID: 11400000, guid: 49a04633494e3bb4e9f87b202a75438e, type: 2}
   cells: []
   spriteLibrary:
   - element: 0
