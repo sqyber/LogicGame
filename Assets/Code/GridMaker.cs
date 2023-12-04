@@ -305,6 +305,7 @@ namespace LogicGame
             return (int)e == 99;
         }
 
+        //progress to next level until the last level where it loops back to the menu
         public void NextLevel()
         {
             if (PlayerPrefs.GetInt("Level") >= levelHolder.Count)
