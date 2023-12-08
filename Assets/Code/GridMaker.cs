@@ -35,9 +35,8 @@ namespace LogicGame
 
         private void Start()
         { 
-            //TODO change back when done with levels
+            //if there is no level, set the level to 0
              if (!PlayerPrefs.HasKey("Level")) PlayerPrefs.SetInt("Level", 0);
-            //PlayerPrefs.SetInt("Level", 1);
             _currentLevel = PlayerPrefs.GetInt("Level");
 
 

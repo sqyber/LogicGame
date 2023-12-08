@@ -162,6 +162,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4a6bd38651fbee84aaddc35d265f84a8, type: 2}
   - {fileID: 11400000, guid: 77bdfdd558a2c8148960b69d96f87b6f, type: 2}
   - {fileID: 11400000, guid: 49a04633494e3bb4e9f87b202a75438e, type: 2}
+  - {fileID: 11400000, guid: 6015fdd76ce43ea47b3327f6c83dffae, type: 2}
   cells: []
   spriteLibrary:
   - element: 0
